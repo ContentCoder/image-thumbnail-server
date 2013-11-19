@@ -17,6 +17,7 @@ var util 				= require('util'),
 		qs 					= require('querystring'),
 		request 		= require('request'),
 		mime 				= require('mime'),
+		gm 					= require('gm'),
 		thumb				= require('image-thumbnail'),
 		config 			= require(path.join(__dirname, 'config.json'));
 
@@ -27,7 +28,7 @@ http.createServer(function(req, res) {
 	req.parsedUrl = url.parse(req.url, true);
 	switch (req.method + req.parsedUrl.pathname) {
 	case 'GET/thumbnail':
-    getThumb(req, res);
+    getThumbnail(req, res);
     return;
   default:
 		responseError(res, 404, {message: '404, Not Found'});
@@ -42,8 +43,8 @@ function getThumbnail(req, res) {
 		return;
 	}
 
-	util.log('request image: start...');
-	request({uri: req.parsedUrl.query.url, encoding: 'binary'}, function(e, r, body) {
+	util.log(util.format('request image: %s ...', req.parsedUrl.query.url));
+	request({uri: req.parsedUrl.query.url, encoding: null}, function(e, r, body) {
     if (e || r.statusCode != 200) {
 			responseError(res, 200, e || {message: 'request url error'});
       return;
@@ -55,7 +56,7 @@ function getThumbnail(req, res) {
 			height: req.parsedUrl.query.height,
 			crop: 	req.parsedUrl.query.crop
 		};
-		util.log(JSON.stringify(params, null, 2));
+		util.log(JSON.stringify(options, null, 2));
 		thumb.thumbnailBuffer(body, options, function(e, buffer) {
 			if (e) {
 				responseError(res, 200, e);
