@@ -3,7 +3,7 @@
  * 
  * Image thumbnail server.
  * 
- * version			: 0.1.0
+ * version			: 0.1.1
  * create date	: 2013.11.02
  * update date 	: 2013.11.18
  *
@@ -17,7 +17,7 @@ var util 				= require('util'),
 		qs 					= require('querystring'),
 		request 		= require('request'),
 		mime 				= require('mime'),
-		thumb				= require(path.join(__dirname, 'thumbnail')),
+		thumb				= require('image-thumbnail'),
 		config 			= require(path.join(__dirname, 'config.json'));
 
 util.log(JSON.stringify(config, null, 2));
