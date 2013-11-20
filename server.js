@@ -3,9 +3,9 @@
  * 
  * Image thumbnail server.
  * 
- * version			: 0.1.1
+ * version			: 0.1.2
  * create date	: 2013.11.02
- * update date 	: 2013.11.18
+ * update date 	: 2013.11.20
  *
  */
 
@@ -17,8 +17,7 @@ var util 				= require('util'),
 		qs 					= require('querystring'),
 		request 		= require('request'),
 		mime 				= require('mime'),
-		gm 					= require('gm'),
-		thumb				= require('image-thumbnail'),
+		thumb				= require('image-thumbnail-buffer'),
 		config 			= require(path.join(__dirname, 'config.json'));
 
 util.log(JSON.stringify(config, null, 2));
@@ -57,22 +56,16 @@ function getThumbnail(req, res) {
 			crop: 	req.parsedUrl.query.crop
 		};
 		util.log(JSON.stringify(options, null, 2));
-		thumb.thumbnailBuffer(body, options, function(e, buffer) {
+		thumb.thumbnail(body, options, function(e, buffer, format) {
 			if (e) {
 				responseError(res, 200, e);
 				return;
 			}
-			gm(buffer).format(function(e, format) {
-				if (e) {
-					responseError(res, 200, e);
-					return;
-				}
-				util.log(format);
-				var type = mime.lookup(format);
-				res.writeHead(200, {'Content-Type': type});
-				res.end(buffer);
-				return;
-			});
+			util.log(format);
+			var type = mime.lookup(format);
+			res.writeHead(200, {'Content-Type': type});
+			res.end(buffer);
+			return;
 		});
 	});
 }
